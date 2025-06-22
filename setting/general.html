@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="general" content="let check your settings">
+        <link rel="stylesheet" href="/src/output.css">
+        <link rel="icon" type="image/png" href="/pic/island.png">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <title>General Settings</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom styling for sidebar transition */
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        .sidebar.hidden-mobile {
+            transform: translateX(-100%);
+        }
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999; /* Below message box, above content */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Sub-menu arrow rotation */
+        .submenu-toggle .fa-chevron-down {
+            transition: transform 0.3s ease-in-out;
+        }
+        .submenu-toggle.active .fa-chevron-down {
+            transform: rotate(180deg);
+        }
+
+        /* Message box styling (retained from previous immersive) */
+        #messageBox {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50; /* Green for success */
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            min-width: 250px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        #messageBox.error {
+            background-color: #f44336; /* Red for error */
+        }
+
+        #messageBox.show {
+            opacity: 1;
+        }
+
+         /* Card animation */
+        @keyframes slideInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .booking-card {
+            animation: slideInUp 0.6s ease-out forwards;
+        }
+
+        /* Custom focus styles for inputs and selects */
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6; /* Blue border on focus */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* Blue glow on focus */
+        }
+
+        /* Style for date input to show calendar icon */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.5) sepia(1) saturate(5) hue-rotate(175deg) brightness(0.9); /* Makes icon blue */
+            cursor: pointer;
+        }
+
+         .form-group {
+            margin-bottom: 1.25rem; /* Equivalent to mb-5 */
+        }
+        /* Style for labels */
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem; /* Equivalent to mb-2 */
+            font-weight: 600; /* Equivalent to font-semibold */
+            color: #4a5568; /* Dark grey text */
+        }
+        /* Style for input fields */
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem; /* Equivalent to px-4 py-3 */
+            border: 1px solid #cbd5e0; /* Light border */
+            border-radius: 0.5rem; /* Equivalent to rounded-lg */
+            font-size: 1rem; /* Base font size */
+            color: #2d3748; /* Darker text for inputs */
+            background-color: #ffffff; /* White background for inputs */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            outline: none; /* Remove default outline */
+        }
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="tel"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #6366f1; /* Indigo border on focus */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); /* Focus ring */
+        }
+        .form-group textarea {
+            min-height: 8rem; /* Equivalent to h-32 */
+            resize: vertical; /* Allow vertical resizing */
+        }
+
+        /* Responsive grid layout for settings sections */
+        @media (min-width: 640px) { /* sm breakpoint */
+            .settings-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+        @media (min-width: 1024px) { /* lg breakpoint */
+            .settings-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+    </head>
+    <body class="bg-gray-100 font-sans">
+        <div class="flex h-screen overflow-hidden">
+            <!-- Sidebar -->
+            <div 
+                class="sidebar flex flex-col w-64 bg-blue-800 text-white z-50 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 md:flex-shrink-0">
+                <div
+                    class="flex items-center justify-center h-16 px-4 bg-blue-900">
+                    <a href="#" class="text-xl font-semibold"
+                        >Kim Hotel</a>
+                </div>
+                <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
+                    <nav class="flex-1 space-y-2">
+                        <a href="/file/dashboard.html"
+                            class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-700 text-white"
+                            onclick="showMessageBox(translations[currentLanguage].dashboardClicked)">
+                            <i class="fas fa-tachometer-alt mr-3"></i>
+                            <span data-translate="dashboard">Dashboard</span>
+                        </a>
+                        <a href="/book/book.html"
+                            class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-700 text-white"
+                            onclick="showMessageBox(translations[currentLanguage].bookingsClicked)">
+                            <i class="fas fa-calendar-check mr-3"></i>
+                            <span data-translate="bookings">Bookings</span>
+                        </a>
+                        <a href="/room/room.html"
+                            class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-700 text-white"
+                            onclick="showMessageBox(translations[currentLanguage].roomsClicked)">
+                            <i class="fas fa-bed mr-3"></i>
+                            <span data-translate="rooms">Rooms</span>
+                        </a>
+                        <a href="/guest/guest.html"
+                            class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-700 text-white"
+                            onclick="showMessageBox(translations[currentLanguage].guestsClicked)">
+                            <i class="fas fa-users mr-3"></i>
+                            <span data-translate="guests">Guests</span>
+                        </a>
+                        <a href="/services/service.html"
+                            class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-700 text-white"
+                            onclick="showMessageBox(translations[currentLanguage].servicesClicked)">
+                            <i class="fas fa-concierge-bell mr-3"></i>
+                            <span data-translate="services">Services</span>
+                        </a>
+
+                        <!-- Reports with Sub-menu -->
+                        <div class="relative">
+                            <a href="/report/report.html" id="reportsMenuToggle"
+                                class="flex items-center px-4 py-2 text-sm font-medium rounded-md  text-white">
+                                <i class="fas fa-chart-bar mr-3"></i>
+                                <span data-translate="reports">Reports</span>
+                                <i
+                                    class="fas fa-chevron-down ml-auto text-xs"></i>
+                            </a>
+                            <div id="reportsSubMenu"
+                                class="pl-8 pt-2 space-y-2 hidden">
+                                <a href="/report/daily.html"
+                                    class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-600 text-white"
+                                    onclick="showMessageBox(translations[currentLanguage].dailyReportsClicked)">
+                                    <span data-translate="dailyReports">Daily
+                                        Reports</span>
+                                </a>
+                                <a href="/report/month.html"
+                                    class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-600 text-white"
+                                    onclick="showMessageBox(translations[currentLanguage].monthlyReportsClicked)">
+                                    <span
+                                        data-translate="monthlyReports">Monthly
+                                        Reports</span>
+                                </a>
+                                <a href="/report/customer.html"
+                                    class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-600 text-white"
+                                    onclick="showMessageBox(translations[currentLanguage].customReportsClicked)">
+                                    <span
+                                        data-translate="customReports">Customer
+                                        Reports</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Settings with Sub-menu -->
+                        <div class="relative">
+                            <a href="#" id="settingsMenuToggle"
+                                class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-700 text-white submenu-toggle">
+                                <i class="fas fa-cog mr-3"></i>
+                                <span data-translate="settings">Settings</span>
+                                <i
+                                    class="fas fa-chevron-down ml-auto text-xs"></i>
+                            </a>
+                            <div id="settingsSubMenu"
+                                class="pl-8 pt-2 space-y-2 hidden">
+                                <a href="general.html"
+                                    class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-600 text-white"
+                                    onclick="showMessageBox(translations[currentLanguage].generalSettingsClicked)">
+                                    <span
+                                        data-translate="general">General</span>
+                                </a>
+                                <a href="user.html"
+                                    class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-600 text-white"
+                                    onclick="showMessageBox(translations[currentLanguage].userManagementClicked)">
+                                    <span data-translate="userManagement">User
+                                        Management</span>
+                                </a>
+                                <a href="billing.html"
+                                    class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-600 text-white"
+                                    onclick="showMessageBox(translations[currentLanguage].billingSettingsClicked)">
+                                    <span
+                                        data-translate="billing">Billing</span>
+                                </a>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+                <div class="p-4 border-t border-blue-700">
+                    <div class="flex items-center">
+                        <img class="w-10 h-10 rounded-full"
+                            style="object-fit: cover;" src="/pic/Kimheng.jpg"
+                            data-translate-alt="userAvatar" alt="User">
+                        <div class="ml-3">
+                            <p class="text-sm font-medium">Srun Kimheng</p>
+                            <p class="text-xs text-blue-200"
+                                data-translate="admin">Admin</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Overlay for mobile -->
+            <div id="sidebarOverlay" class="sidebar-overlay md:hidden"></div>
+
+            <!-- Main Content -->
+            <div class="flex flex-col flex-1 overflow-hidden">
+                <!-- Top Navigation -->
+                <header
+                    class="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm z-40">
+                    <div class="flex items-center">
+                        <!-- Hamburger icon for mobile sidebar toggle -->
+                        <button id="sidebarToggle"
+                            class="md:hidden text-gray-500 focus:outline-none mr-4">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        <h1 class="text-xl font-semibold text-gray-800"
+                            data-translate="dashboardTitle">Dashboard</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <!-- Search Bar -->
+                        <div class="relative hidden md:block">
+                            <span
+                                class="absolute inset-y-0 left-0 pl-3 flex items-center">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </span>
+                            <input type="text"
+                                data-translate-placeholder="searchPlaceholder"
+                                placeholder="Search..."
+                                class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+
+                        <!-- Notification Button -->
+                        <button
+                            class="text-gray-500 hover:text-gray-700 focus:outline-none relative"
+                            onclick="showMessageBox(translations[currentLanguage].newNotifications)">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span
+                                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1 rounded-full">3</span>
+                        </button>
+                        <!-- Messages Button -->
+                        <button
+                            class="text-gray-500 hover:text-gray-700 focus:outline-none relative"
+                            onclick="showMessageBox(translations[currentLanguage].unreadMessages)">
+                            <i class="fas fa-envelope text-lg"></i>
+                            <span
+                                class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs px-1 rounded-full">2</span>
+                        </button>
+
+                        <!-- Language Selector (Dropdown) -->
+                        <div class="relative">
+                            <button id="languageDropdownToggle"
+                                class="flex items-center text-gray-500 hover:text-gray-700 focus:outline-none">
+                                <i class="fas fa-globe text-lg mr-1"></i>
+                                <span id="currentLanguageDisplay"
+                                    class="text-sm">EN</span>
+                                <i class="fas fa-chevron-down text-xs ml-1"></i>
+                            </button>
+                            <div id="languageDropdown"
+                                class="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-50 hidden">
+                                <a href="#"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    onclick="selectLanguage('en')">English</a>
+                                <a href="#"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    onclick="selectLanguage('es')">Español</a>
+                                <a href="#"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    onclick="selectLanguage('fr')">Français</a>
+                                <a href="#"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    onclick="selectLanguage('km')">ភាសាខ្មែរ</a>
+                            </div>
+                        </div>
+
+                        <!-- User Profile Dropdown -->
+                        <div class="relative">
+                            <button id="userDropdownToggle"
+                                class="flex items-center focus:outline-none">
+                                <img class="w-8 h-8 rounded-full"
+                                    style="object-fit: cover;"
+                                    src="/pic/Kimheng.jpg"
+                                    data-translate-alt="userProfileAvatar"
+                                    alt="User">
+                            </button>
+                            <div id="userDropdown"
+                                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">
+                                <a href="/layout/profile.html"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    onclick="showMessageBox(translations[currentLanguage].profileClicked)">
+                                    <span data-translate="yourProfile">Your
+                                        Profile</span>
+                                </a>
+                                <a href="/layout/setting.html"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    onclick="showMessageBox(translations[currentLanguage].settingsClicked)">
+                                    <span
+                                        data-translate="settings">Settings</span>
+                                </a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="/layout/signout.html"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    onclick="showMessageBox(translations[currentLanguage].logoutClicked)">
+                                    <span data-translate="signOut">Sign
+                                        out</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Main Content Area -->
+                <div style="display: flex;justify-content: center;align-items: center;margin-top: 4px;z-index: 999;"   class="flex-1 overflow-y-auto p-6 bg-gray-100">
+                     <div class="max-w-8xl w-full bg-white shadow-xl rounded-2xl p-6 sm:p-8 lg:p-10 border border-gray-200">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">Hotel Settings</h1>
+
+        <form id="hotelSettingsForm" class="space-y-8">
+            <!-- General Information Section -->
+            <section class="bg-gray-50 p-6 rounded-xl border border-gray-100">
+                <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-3 border-gray-200">General Information</h2>
+                <!-- Applied settings-grid here -->
+                <div class="settings-grid">
+                    <div class="form-group">
+                        <label for="hotelName">Hotel Name</label>
+                        <input type="text" id="hotelName" name="hotelName" placeholder="e.g., Grand Plaza Hotel" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" name="address" placeholder="e.g., 123 Main St, City, Country" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" placeholder="e.g., New York" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="form-group">
+                        <label for="zipCode">Zip Code</label>
+                        <input type="text" id="zipCode" name="zipCode" placeholder="e.g., 10001" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <input type="text" id="country" name="country" placeholder="e.g., USA" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactEmail">Contact Email</label>
+                        <input type="email" id="contactEmail" name="contactEmail" placeholder="e.g., info@grandplaza.com" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactPhone">Contact Phone</label>
+                        <input type="tel" id="contactPhone" name="contactPhone" placeholder="e.g., +1 (123) 456-7890" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="form-group md:col-span-2">
+                        <label for="description">Hotel Description</label>
+                        <textarea id="description" name="description" rows="4" placeholder="Brief description of your hotel..." class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Booking & Operations Settings Section -->
+            <section class="bg-gray-50 p-6 rounded-xl border border-gray-100">
+                <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-3 border-gray-200">Booking & Operations</h2>
+                <!-- Applied settings-grid here -->
+                <div class="settings-grid">
+                    <div class="form-group">
+                        <label for="checkInTime">Check-in Time</label>
+                        <input type="text" id="checkInTime" name="checkInTime" placeholder="e.g., 15:00" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="form-group">
+                        <label for="checkOutTime">Check-out Time</label>
+                        <input type="text" id="checkOutTime" name="checkOutTime" placeholder="e.g., 11:00" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="form-group">
+                        <label for="currency">Default Currency</label>
+                        <select id="currency" name="currency" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="USD">USD - United States Dollar</option>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="GBP">GBP - British Pound</option>
+                            <option value="JPY">JPY - Japanese Yen</option>
+                            <option value="CAD">CAD - Canadian Dollar</option>
+                            <option value="AUD">AUD - Australian Dollar</option>
+                        </select>
+                    </div>
+                    <div class="form-group flex items-center justify-start mt-4">
+                        <input type="checkbox" id="onlineBookingEnabled" name="onlineBookingEnabled" class="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 mr-2">
+                        <label for="onlineBookingEnabled" class="mb-0">Enable Online Booking</label>
+                    </div>
+                    <div class="form-group flex items-center justify-start">
+                        <input type="checkbox" id="autoConfirmBookings" name="autoConfirmBookings" class="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 mr-2">
+                        <label for="autoConfirmBookings" class="mb-0">Auto-confirm Bookings</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Save Button and Message -->
+            <div class="flex flex-col sm:flex-row justify-center items-center mt-10 space-y-4 sm:space-y-0 sm:space-x-4">
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 w-full sm:w-auto">
+                    Save Settings
+                </button>
+                <div id="saveMessage" class="text-green-600 font-medium opacity-0 transition-opacity duration-300 ease-in-out mt-4 sm:mt-0">
+                    Settings saved successfully!
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('hotelSettingsForm');
+            const saveMessage = document.getElementById('saveMessage');
+
+            form.addEventListener('submit', (event) => {
+                event.preventDefault(); // Prevent default form submission
+
+                // In a real application, you would collect form data here
+                // and send it to a backend API to save.
+                const settingsData = {
+                    hotelName: document.getElementById('hotelName').value,
+                    address: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    zipCode: document.getElementById('zipCode').value,
+                    country: document.getElementById('country').value,
+                    contactEmail: document.getElementById('contactEmail').value,
+                    contactPhone: document.getElementById('contactPhone').value,
+                    description: document.getElementById('description').value,
+                    checkInTime: document.getElementById('checkInTime').value,
+                    checkOutTime: document.getElementById('checkOutTime').value,
+                    currency: document.getElementById('currency').value,
+                    onlineBookingEnabled: document.getElementById('onlineBookingEnabled').checked,
+                    autoConfirmBookings: document.getElementById('autoConfirmBookings').checked,
+                };
+
+                console.log("Saving settings:", settingsData);
+
+                // Simulate an API call with a delay
+                setTimeout(() => {
+                    saveMessage.classList.remove('opacity-0');
+                    saveMessage.classList.add('opacity-100');
+
+                    // Hide the message after a few seconds
+                    setTimeout(() => {
+                        saveMessage.classList.remove('opacity-100');
+                        saveMessage.classList.add('opacity-0');
+                    }, 3000); // Message visible for 3 seconds
+                }, 500); // Simulate 0.5 second saving process
+            });
+        });
+    </script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Box Element -->
+        <div id="messageBox"></div>
+
+        <script>
+        // Define translation data
+        const translations = {
+            en: {
+                hotelManagementSystem: "Hotel Management System",
+                hotelVista: "Hotel Vista",
+                dashboard: "Dashboard",
+                bookings: "Bookings",
+                rooms: "Rooms",
+                guests: "Guests",
+                services: "Services",
+                reports: "Reports",
+                dailyReports: "Daily Reports",
+                monthlyReports: "Monthly Reports",
+                customReports: "Custom Reports",
+                settings: "Settings",
+                general: "General",
+                userManagement: "User Management",
+                billing: "Billing",
+                admin: "Admin",
+                userAvatar: "User",
+                dashboardTitle: "Dashboard",
+                searchPlaceholder: "Search...",
+                newNotifications: "You have 3 new notifications!",
+                unreadMessages: "You have 2 unread messages!",
+                yourProfile: "Your Profile",
+                signOut: "Sign out",
+                profileClicked: "Profile clicked!",
+                settingsClicked: "Settings clicked!",
+                logoutClicked: "Logout clicked!",
+                totalRooms: "Total Rooms",
+                occupied: "Occupied",
+                checkInsToday: "Check-ins Today",
+                checkOutsToday: "Check-outs Today",
+                recentBookings: "Recent Bookings",
+                guest: "Guest",
+                room: "Room",
+                checkIn: "Check-in",
+                checkOut: "Check-out",
+                status: "Status",
+                checkedIn: "Checked In",
+                confirmed: "Confirmed",
+                pending: "Pending",
+                roomStatus: "Room Status",
+                available: "Available",
+                maintenance: "Maintenance",
+                roomTypes: "Room Types",
+                standard: "Standard",
+                deluxe: "Deluxe",
+                executive: "Executive",
+                suite: "Suite",
+                quickActions: "Quick Actions",
+                newBooking: "New Booking",
+                checkInAction: "Check In",
+                checkOutAction: "Check Out",
+                requests: "Requests",
+                languageSetTo: "Language set to ",
+                dashboardClicked: "Dashboard clicked!",
+                bookingsClicked: "Bookings clicked!",
+                roomsClicked: "Rooms clicked!",
+                guestsClicked: "Guests clicked!",
+                servicesClicked: "Services clicked!",
+                dailyReportsClicked: "Daily Reports clicked!",
+                monthlyReportsClicked: "Monthly Reports clicked!",
+                customReportsClicked: "Custom Reports clicked!",
+                generalSettingsClicked: "General Settings clicked!",
+                userManagementClicked: "User Management clicked!",
+                billingSettingsClicked: "Billing Settings clicked!",
+                newBookingAction: "New Booking action!",
+                checkInAction: "Check In action!", // Note: Reusing checkInAction for consistency, though it's a button here
+                checkOutAction: "Check Out action!",
+                requestsAction: "Requests action!",
+                guestAvatar: "Guest Avatar"
+            },
+            es: {
+                hotelManagementSystem: "Sistema de Gestión Hotelera",
+                hotelVista: "Hotel Vista",
+                dashboard: "Panel de Control",
+                bookings: "Reservas",
+                rooms: "Habitaciones",
+                guests: "Huéspedes",
+                services: "Servicios",
+                reports: "Informes",
+                dailyReports: "Informes Diarios",
+                monthlyReports: "Informes Mensuales",
+                customReports: "Informes Personalizados",
+                settings: "Ajustes",
+                general: "General",
+                userManagement: "Gestión de Usuarios",
+                billing: "Facturación",
+                admin: "Administrador",
+                userAvatar: "Usuario",
+                dashboardTitle: "Panel de Control",
+                searchPlaceholder: "Buscar...",
+                newNotifications: "¡Tienes 3 notificaciones nuevas!",
+                unreadMessages: "¡Tienes 2 mensajes sin leer!",
+                yourProfile: "Tu Perfil",
+                signOut: "Cerrar Sesión",
+                profileClicked: "¡Perfil clicado!",
+                settingsClicked: "¡Ajustes clicados!",
+                logoutClicked: "¡Cerrar sesión clicado!",
+                totalRooms: "Total de Habitaciones",
+                occupied: "Ocupadas",
+                checkInsToday: "Entradas Hoy",
+                checkOutsToday: "Salidas Hoy",
+                recentBookings: "Reservas Recientes",
+                guest: "Huésped",
+                room: "Habitación",
+                checkIn: "Entrada",
+                checkOut: "Salida",
+                status: "Estado",
+                checkedIn: "Registrado",
+                confirmed: "Confirmado",
+                pending: "Pendiente",
+                roomStatus: "Estado de la Habitación",
+                available: "Disponibles",
+                maintenance: "Mantenimiento",
+                roomTypes: "Tipos de Habitación",
+                standard: "Estándar",
+                deluxe: "Lujo",
+                executive: "Ejecutiva",
+                suite: "Suite",
+                quickActions: "Acciones Rápidas",
+                newBooking: "Nueva Reserva",
+                checkInAction: "Registrar Entrada",
+                checkOutAction: "Registrar Salida",
+                requests: "Solicitudes",
+                languageSetTo: "Idioma establecido en ",
+                dashboardClicked: "¡Panel de control clicado!",
+                bookingsClicked: "¡Reservas clicadas!",
+                roomsClicked: "¡Habitaciones clicadas!",
+                guestsClicked: "¡Huéspedes clicados!",
+                servicesClicked: "¡Servicios clicados!",
+                dailyReportsClicked: "¡Informes Diarios clicados!",
+                monthlyReportsClicked: "¡Informes Mensuales clicados!",
+                customReportsClicked: "¡Informes Personalizados clicados!",
+                generalSettingsClicked: "¡Ajustes Generales clicados!",
+                userManagementClicked: "¡Gestión de Usuarios clicada!",
+                billingSettingsClicked: "¡Facturación clicada!",
+                newBookingAction: "¡Acción de Nueva Reserva!",
+                checkInAction: "¡Acción de Entrada!",
+                checkOutAction: "¡Acción de Salida!",
+                requestsAction: "¡Acción de Solicitudes!",
+                guestAvatar: "Avatar del Huésped"
+            },
+            fr: {
+                hotelManagementSystem: "Système de Gestion Hôtelière",
+                hotelVista: "Hôtel Vista",
+                dashboard: "Tableau de Bord",
+                bookings: "Réservations",
+                rooms: "Chambres",
+                guests: "Clients",
+                services: "Services",
+                reports: "Rapports",
+                dailyReports: "Rapports Quotidiens",
+                monthlyReports: "Rapports Mensuels",
+                customReports: "Rapports Personnalisés",
+                settings: "Paramètres",
+                general: "Général",
+                userManagement: "Gestion des Utilisateurs",
+                billing: "Facturation",
+                admin: "Administrateur",
+                userAvatar: "Utilisateur",
+                dashboardTitle: "Tableau de Bord",
+                searchPlaceholder: "Rechercher...",
+                newNotifications: "Vous avez 3 nouvelles notifications !",
+                unreadMessages: "Vous avez 2 messages non lus !",
+                yourProfile: "Votre Profil",
+                signOut: "Déconnexion",
+                profileClicked: "Profil cliqué !",
+                settingsClicked: "Paramètres cliqués !",
+                logoutClicked: "Déconnexion cliquée !",
+                totalRooms: "Total des Chambres",
+                occupied: "Occupées",
+                checkInsToday: "Arrivées Aujourd'hui",
+                checkOutsToday: "Départs Aujourd'hui",
+                recentBookings: "Réservations Récentes",
+                guest: "Client",
+                room: "Chambre",
+                checkIn: "Arrivée",
+                checkOut: "Départ",
+                status: "Statut",
+                checkedIn: "Enregistré",
+                confirmed: "Confirmé",
+                pending: "En attente",
+                roomStatus: "Statut des Chambres",
+                available: "Disponibles",
+                maintenance: "Maintenance",
+                roomTypes: "Types de Chambres",
+                standard: "Standard",
+                deluxe: "Luxe",
+                executive: "Exécutive",
+                suite: "Suite",
+                quickActions: "Actions Rapides",
+                newBooking: "Nouvelle Réservation",
+                checkInAction: "Enregistrer l'Arrivée",
+                checkOutAction: "Enregistrer le Départ",
+                requests: "Demandes",
+                languageSetTo: "Langue définie sur ",
+                dashboardClicked: "Tableau de bord cliqué !",
+                bookingsClicked: "Réservations cliquées !",
+                roomsClicked: "Chambres cliquées !",
+                guestsClicked: "Clients cliqués !",
+                servicesClicked: "Services cliqués !",
+                dailyReportsClicked: "Rapports Quotidiens cliqués !",
+                monthlyReportsClicked: "Rapports Mensuels cliqués !",
+                customReportsClicked: "Rapports Personnalisés cliqués !",
+                generalSettingsClicked: "Paramètres Généraux cliqués !",
+                userManagementClicked: "Gestion des Utilisateurs cliquée !",
+                billingSettingsClicked: "Facturation cliquée !",
+                newBookingAction: "Action Nouvelle Réservation !",
+                checkInAction: "Action Enregistrer l'Arrivée !",
+                checkOutAction: "Action Enregistrer le Départ !",
+                requestsAction: "Action Demandes !",
+                guestAvatar: "Avatar du Client"
+            },
+            km: { // Khmer translations
+                hotelManagementSystem: "ប្រព័ន្ធគ្រប់គ្រងសណ្ឋាគារ",
+                hotelVista: "សណ្ឋាគារ វិស្ណុ",
+                dashboard: "ផ្ទាំងគ្រប់គ្រង",
+                bookings: "ការកក់",
+                rooms: "បន្ទប់",
+                guests: "ភ្ញៀវ",
+                services: "សេវាកម្ម",
+                reports: "របាយការណ៍",
+                dailyReports: "របាយការណ៍ប្រចាំថ្ងៃ",
+                monthlyReports: "របាយការណ៍ប្រចាំខែ",
+                customReports: "របាយការណ៍ផ្ទាល់ខ្លួន",
+                settings: "ការកំណត់",
+                general: "ទូទៅ",
+                userManagement: "ការគ្រប់គ្រងអ្នកប្រើប្រាស់",
+                billing: "ការចេញវិក្កយបត្រ",
+                admin: "អ្នកគ្រប់គ្រង",
+                userAvatar: "អ្នកប្រើប្រាស់",
+                dashboardTitle: "ផ្ទាំងគ្រប់គ្រង",
+                searchPlaceholder: "ស្វែងរក...",
+                newNotifications: "អ្នកមានការជូនដំណឹងថ្មី 3!",
+                unreadMessages: "អ្នកមានសារមិនទាន់អាន 2!",
+                yourProfile: "ប្រវត្តិរូបរបស់អ្នក",
+                signOut: "ចេញ",
+                profileClicked: "បានចុចលើប្រវត្តិរូប!",
+                settingsClicked: "បានចុចលើការកំណត់!",
+                logoutClicked: "បានចុចលើចេញ!",
+                totalRooms: "បន្ទប់សរុប",
+                occupied: "កាន់កាប់",
+                checkInsToday: "ភ្ញៀវចូលថ្ងៃនេះ",
+                checkOutsToday: "ភ្ញៀវចេញថ្ងៃនេះ",
+                recentBookings: "ការកក់ថ្មីៗ",
+                guest: "ភ្ញៀវ",
+                room: "បន្ទប់",
+                checkIn: "ចូល",
+                checkOut: "ចេញ",
+                status: "ស្ថានភាព",
+                checkedIn: "បានចូល",
+                confirmed: "បានបញ្ជាក់",
+                pending: "កំពុងរង់ចាំ",
+                roomStatus: "ស្ថានភាពបន្ទប់",
+                available: "ទំនេរ",
+                maintenance: "ជួសជុល",
+                roomTypes: "ប្រភេទបន្ទប់",
+                standard: "ស្តង់ដារ",
+                deluxe: "ប្រណិត",
+                executive: "ប្រតិបត្តិ",
+                suite: "បន្ទប់ពិសេស",
+                quickActions: "សកម្មភាពរហ័ស",
+                newBooking: "ការកក់ថ្មី",
+                checkInAction: "ចូល",
+                checkOutAction: "ចេញ",
+                requests: "សំណើ",
+                languageSetTo: "បានប្ដូរភាសាទៅ ",
+                dashboardClicked: "បានចុចលើផ្ទាំងគ្រប់គ្រង!",
+                bookingsClicked: "បានចុចលើការកក់!",
+                roomsClicked: "បានចុចលើបន្ទប់!",
+                guestsClicked: "បានចុចលើភ្ញៀវ!",
+                servicesClicked: "បានចុចលើសេវាកម្ម!",
+                dailyReportsClicked: "បានចុចលើរបាយការណ៍ប្រចាំថ្ងៃ!",
+                monthlyReportsClicked: "បានចុចលើរបាយការណ៍ប្រចាំខែ!",
+                customReportsClicked: "បានចុចលើរបាយការណ៍ផ្ទាល់ខ្លួន!",
+                generalSettingsClicked: "បានចុចលើការកំណត់ទូទៅ!",
+                userManagementClicked: "បានចុចលើការគ្រប់គ្រងអ្នកប្រើប្រាស់!",
+                billingSettingsClicked: "បានចុចលើការចេញវិក្កយបត្រ!",
+                newBookingAction: "សកម្មភាពកក់ថ្មី!",
+                checkInAction: "សកម្មភាពចូល!",
+                checkOutAction: "សកម្មភាពចេញ!",
+                requestsAction: "សកម្មភាពសំណើ!",
+                guestAvatar: "រូបតំណាងភ្ញៀវ"
+            }
+        };
+
+        let currentLanguage = 'en'; // Default language
+
+        /**
+         * Displays a custom message box at the top of the screen.
+         * @param {string} message - The message to display.
+         * @param {boolean} isError - If true, styles the message as an error.
+         */
+        function showMessageBox(message, isError = false) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            // Reset classes to ensure correct styling for consecutive calls
+            messageBox.className = '';
+            messageBox.classList.add('message-box');
+
+            if (isError) {
+                messageBox.classList.add('error');
+            }
+            messageBox.classList.add('show');
+
+            // Hide the message after 3 seconds
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 3000);
+        }
+
+        /**
+         * Applies translations to all elements with data-translate attributes based on the current language.
+         * @param {string} lang - The language code (e.g., 'en', 'es', 'fr', 'km').
+         */
+        function applyTranslations(lang) {
+            // Update elements with data-translate attribute (text content)
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            // Update input placeholders
+            document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-translate-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+
+            // Update image alt text
+            document.querySelectorAll('[data-translate-alt]').forEach(element => {
+                const key = element.getAttribute('data-translate-alt');
+                if (translations[lang] && translations[lang][key]) {
+                    element.alt = translations[lang][key];
+                }
+            });
+
+            // Update the display text of the language selector button
+            document.getElementById('currentLanguageDisplay').textContent = lang.toUpperCase();
+
+            // Update the document title
+            document.title = translations[lang].hotelManagementSystem;
+        }
+
+        // Get references to elements for interactive features
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const userDropdownToggle = document.getElementById('userDropdownToggle');
+        const userDropdown = document.getElementById('userDropdown');
+        const languageDropdownToggle = document.getElementById('languageDropdownToggle');
+        const languageDropdown = document.getElementById('languageDropdown');
+
+        // New elements for sidebar sub-menus
+        const reportsMenuToggle = document.getElementById('reportsMenuToggle');
+        const reportsSubMenu = document.getElementById('reportsSubMenu');
+        const settingsMenuToggle = document.getElementById('settingsMenuToggle');
+        const settingsSubMenu = document.getElementById('settingsSubMenu');
+
+
+        /**
+         * Toggles the visibility of the sidebar on mobile.
+         * Adds/removes 'hidden-mobile' class for positioning and 'show' for overlay.
+         */
+        function toggleSidebar() {
+            sidebar.classList.toggle('hidden-mobile');
+            sidebarOverlay.classList.toggle('show');
+        }
+
+        // Event listener for the sidebar toggle button (hamburger icon)
+        sidebarToggle.addEventListener('click', toggleSidebar);
+
+        // Event listener for clicking the sidebar overlay (to close sidebar on mobile)
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        /**
+         * Toggles the visibility of a dropdown menu.
+         * @param {HTMLElement} dropdownElement - The dropdown element to toggle.
+         * @param {HTMLElement} toggleButton - The button that triggers the dropdown.
+         */
+        function toggleDropdown(dropdownElement, toggleButton) {
+            // Close other dropdowns if open
+            if (dropdownElement === userDropdown && !languageDropdown.classList.contains('hidden')) {
+                languageDropdown.classList.add('hidden');
+            } else if (dropdownElement === languageDropdown && !userDropdown.classList.contains('hidden')) {
+                userDropdown.classList.add('hidden');
+            }
+
+            dropdownElement.classList.toggle('hidden');
+        }
+
+        /**
+         * Toggles the visibility of a sidebar sub-menu and rotates its icon.
+         * @param {HTMLElement} menuToggleElement - The parent menu item element (e.g., Reports, Settings).
+         * @param {HTMLElement} subMenuElement - The sub-menu element to toggle.
+         */
+        function toggleSubMenu(menuToggleElement, subMenuElement) {
+            subMenuElement.classList.toggle('hidden');
+            menuToggleElement.classList.toggle('active'); // Add/remove 'active' class for icon rotation
+        }
+
+        // Event listener for the user profile dropdown toggle
+        userDropdownToggle.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent document click from closing it immediately
+            toggleDropdown(userDropdown, userDropdownToggle);
+        });
+
+        // Event listener for the language selector dropdown toggle
+        languageDropdownToggle.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent document click from closing it immediately
+            toggleDropdown(languageDropdown, languageDropdownToggle);
+        });
+
+        // Event listener for Reports sub-menu toggle
+        reportsMenuToggle.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default link behavior
+            toggleSubMenu(reportsMenuToggle, reportsSubMenu);
+        });
+
+        // Event listener for Settings sub-menu toggle
+        settingsMenuToggle.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default link behavior
+            toggleSubMenu(settingsMenuToggle, settingsSubMenu);
+        });
+
+        /**
+         * Handles language selection from the dropdown.
+         * @param {string} lang - The selected language code (e.g., 'en', 'es', 'fr', 'km').
+         */
+        function selectLanguage(lang) {
+            currentLanguage = lang; // Update the global current language
+            applyTranslations(currentLanguage); // Apply new translations
+            showMessageBox(translations[currentLanguage].languageSetTo + lang.toUpperCase()); // Display confirmation message
+            languageDropdown.classList.add('hidden'); // Hide dropdown after selection
+        }
+
+        // Close dropdowns and sub-menus if clicked outside
+        document.addEventListener('click', function(event) {
+            // Close top navigation dropdowns
+            if (!userDropdownToggle.contains(event.target) && !userDropdown.contains(event.target)) {
+                userDropdown.classList.add('hidden');
+            }
+            if (!languageDropdownToggle.contains(event.target) && !languageDropdown.contains(event.target)) {
+                languageDropdown.classList.add('hidden');
+            }
+
+            // Close sidebar sub-menus if clicking outside them
+            if (!reportsMenuToggle.contains(event.target) && !reportsSubMenu.contains(event.target)) {
+                reportsSubMenu.classList.add('hidden');
+                reportsMenuToggle.classList.remove('active');
+            }
+            if (!settingsMenuToggle.contains(event.target) && !settingsSubMenu.contains(event.target)) {
+                settingsSubMenu.classList.add('hidden');
+                settingsMenuToggle.classList.remove('active');
+            }
+        });
+
+        // Placeholder image fallback for user avatars
+        document.querySelectorAll('img').forEach(img => {
+            img.onerror = function() {
+                // Set a default placeholder if the image fails to load
+                this.src = 'https://placehold.co/40x40/cccccc/000000?text=User';
+                // Use the translated 'User' text for the alt attribute
+                this.alt = translations[currentLanguage].userAvatar;
+            };
+        });
+
+        // Initialize translations when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTranslations(currentLanguage); // Apply default language on load
+        });
+         document.addEventListener('DOMContentLoaded', () => {
+            const bookingForm = document.getElementById('bookingForm');
+            const guestNameInput = document.getElementById('guestName');
+            const checkInDateInput = document.getElementById('checkInDate');
+            const checkOutDateInput = document.getElementById('checkOutDate');
+            const numAdultsInput = document.getElementById('numAdults');
+            const numChildrenInput = document.getElementById('numChildren');
+            const roomTypeSelect = document.getElementById('roomType');
+            const specialRequestsTextarea = document.getElementById('specialRequests');
+            const messageBox = document.getElementById('messageBox');
+            const bookingSummary = document.getElementById('bookingSummary');
+
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+
+            // Set min date for check-in to today
+            checkInDateInput.min = today.toISOString().split('T')[0];
+            // Set min date for check-out to tomorrow
+            checkOutDateInput.min = tomorrow.toISOString().split('T')[0];
+
+            // Function to display a message in the message box
+            function showMessage(message, type = 'success') {
+                messageBox.textContent = message;
+                messageBox.classList.remove('hidden', 'bg-red-500', 'bg-green-500', 'bg-yellow-500');
+                if (type === 'success') {
+                    messageBox.classList.add('bg-green-500');
+                } else if (type === 'error') {
+                    messageBox.classList.add('bg-red-500');
+                } else { // info or warning
+                    messageBox.classList.add('bg-yellow-500');
+                }
+                // Automatically hide the message after 3 seconds
+                setTimeout(hideMessage, 3000);
+            }
+
+            // Function to hide the message box
+            function hideMessage() {
+                messageBox.classList.add('hidden');
+                messageBox.textContent = '';
+            }
+
+            // Event listener for Check-in Date change to update Check-out min date
+            checkInDateInput.addEventListener('change', () => {
+                const checkInDate = new Date(checkInDateInput.value);
+                const nextDay = new Date(checkInDate);
+                nextDay.setDate(checkInDate.getDate() + 1);
+                checkOutDateInput.min = nextDay.toISOString().split('T')[0];
+
+                // If check-out date is before or same as new check-in date, reset it
+                if (new Date(checkOutDateInput.value) <= checkInDate) {
+                    checkOutDateInput.value = '';
+                }
+            });
+
+            // Handle form submission
+            bookingForm.addEventListener('submit', (event) => {
+                event.preventDefault(); // Prevent default form submission
+
+                // Get values
+                const guestName = guestNameInput.value.trim();
+                const checkInDateStr = checkInDateInput.value;
+                const checkOutDateStr = checkOutDateInput.value;
+                const numAdults = parseInt(numAdultsInput.value);
+                const numChildren = parseInt(numChildrenInput.value);
+                const roomType = roomTypeSelect.value;
+                const specialRequests = specialRequestsTextarea.value.trim();
+
+                // Basic validation
+                if (!guestName || !checkInDateStr || !checkOutDateStr || !roomType) {
+                    showMessage('Please fill in all required fields.', 'error');
+                    return;
+                }
+
+                if (numAdults <= 0) {
+                    showMessage('Number of adults must be at least 1.', 'error');
+                    return;
+                }
+
+                const checkInDate = new Date(checkInDateStr);
+                const checkOutDate = new Date(checkOutDateStr);
+
+                // Date validation
+                if (checkInDate >= checkOutDate) {
+                    showMessage('Check-out date must be after check-in date.', 'error');
+                    return;
+                }
+                if (checkInDate < today && checkInDateInput.value !== today.toISOString().split('T')[0]) {
+                     showMessage('Check-in date cannot be in the past.', 'error');
+                     return;
+                 }
+
+
+                // Calculate number of nights
+                const diffTime = Math.abs(checkOutDate - checkInDate);
+                const numNights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                // Calculate estimated cost
+                let costPerNight = 0;
+                switch (roomType) {
+                    case 'standard':
+                        costPerNight = 100;
+                        break;
+                    case 'deluxe':
+                        costPerNight = 150;
+                        break;
+                    case 'suite':
+                        costPerNight = 250;
+                        break;
+                }
+                const totalCost = numNights * costPerNight;
+
+                // Display booking summary
+                document.getElementById('summaryGuestName').textContent = `Guest: ${guestName}`;
+                document.getElementById('summaryDates').textContent = `Dates: ${checkInDateStr} to ${checkOutDateStr}`;
+                document.getElementById('summaryNights').textContent = `Nights: ${numNights}`;
+                document.getElementById('summaryGuests').textContent = `Guests: ${numAdults} Adult(s), ${numChildren} Child(ren)`;
+                document.getElementById('summaryRoomType').textContent = `Room Type: ${roomType.charAt(0).toUpperCase() + roomType.slice(1)} Room`;
+                document.getElementById('summaryCost').textContent = `Estimated Cost: $${totalCost}`;
+                document.getElementById('summaryRequests').textContent = `Special Requests: ${specialRequests || 'None'}`;
+                bookingSummary.classList.remove('hidden');
+
+                // Simulate booking process
+                showMessage('Booking room...', 'info');
+                setTimeout(() => {
+                    // In a real application, you'd send this data to a server
+                    console.log('Booking Details:', {
+                        guestName,
+                        checkInDate: checkInDateStr,
+                        checkOutDate: checkOutDateStr,
+                        numAdults,
+                        numChildren,
+                        roomType,
+                        specialRequests,
+                        numNights,
+                        totalCost
+                    });
+                    showMessage('Room booked successfully! See details above.', 'success');
+                    // Optionally clear form after successful booking
+                    bookingForm.reset();
+                    bookingSummary.classList.add('hidden'); // Hide summary after reset
+                    checkInDateInput.min = today.toISOString().split('T')[0]; // Reset min date for check-in
+                    checkOutDateInput.min = tomorrow.toISOString().split('T')[0]; // Reset min date for check-out
+                }, 1500); // Simulate network delay
+            });
+        });
+    </script>
+    </body>
+</html>

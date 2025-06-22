@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="login" content="Welcome to Login-Form">
+    <link rel="stylesheet" href="/src/output.css">
+    <link rel="icon" type="image/png" href="/pic/island.png">
+    <title data-translate="beautifulLoginRegisterForm">Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; 
+            margin: 0;
+            padding: 20px; 
+            box-sizing: border-box; 
+        }
+
+        /* Message box styling */
+        #messageBox {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50; /* Green for success */
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            min-width: 250px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        #messageBox.error {
+            background-color: #f44336; /* Red for error */
+        }
+
+        #messageBox.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main container for the forms -->
+    <div id="formContainer" class="bg-white p-8 md:p-10 rounded-xl shadow-2xl w-full max-w-sm sm:max-w-md lg:max-w-lg transition-all duration-300 ease-in-out transform hover:scale-105">
+
+        <!-- Language Selector -->
+        <div class="flex justify-end mb-4">
+            <div class="relative">
+                <button id="languageDropdownToggle" class="flex items-center text-gray-500 hover:text-gray-700 focus:outline-none">
+                    <i class="fas fa-globe text-lg mr-1"></i>
+                    <span id="currentLanguageDisplay" class="text-sm">EN</span>
+                    <i class="fas fa-chevron-down text-xs ml-1"></i>
+                </button>
+                <div id="languageDropdown" class="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-50 hidden">
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="selectLanguage('en')">English</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="selectLanguage('es')">Español</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="selectLanguage('km')">ភាសាខ្មែរ</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Form Section -->
+        <div id="loginSection">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-center text-gray-800 mb-8" data-translate="loginAccount">Login to Your Account</h2>
+            <!-- id="loginForm" -->
+            <form class="space-y-6" action="dashboard.html">
+                <!-- Email/Username Input Field -->
+                <div>
+                    <label for="loginEmail" class="block text-gray-700 text-sm md:text-base font-semibold mb-2" data-translate="emailOrUsername">Email or Username</label>
+                    <input
+                        type="text"
+                        id="loginEmail"
+                        name="email"
+                        data-translate-placeholder="emailPlaceholder"
+                        placeholder="you@example.com"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 ease-in-out"
+                        required
+                    >
+                </div>
+
+                <!-- Password Input Field -->
+                <div>
+                    <label for="loginPassword" class="block text-gray-700 text-sm md:text-base font-semibold mb-2" data-translate="password">Password</label>
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        name="password"
+                        placeholder="••••••••"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 ease-in-out"
+                        required
+                    >
+                </div>
+
+                <!-- Remember Me & Forgot Password Section -->
+                <div class="flex items-center justify-between text-sm md:text-base">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="rememberMe" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <label for="rememberMe" class="ml-2 block text-gray-900" data-translate="rememberMe">Remember me</label>
+                    </div>
+                    <a href="#" class="font-medium text-indigo-600 hover:text-indigo-800 transition duration-200 ease-in-out" data-translate="forgotPassword">Forgot password?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button ondblclick="data()"
+                        type="submit"
+                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform transition duration-300 ease-in-out hover:scale-105 shadow-md hover:shadow-lg"
+                        data-translate="loginButton"
+                    >
+                        Login
+                    </button>
+                </div>
+
+                <!-- Sign Up Link -->
+                <p class="text-center text-gray-600 text-sm md:text-base mt-6">
+                    <span data-translate="noAccount">Don't have an account?</span>
+                    <a href="#" id="showRegister" class="font-medium text-indigo-600 hover:text-indigo-800 transition duration-200 ease-in-out" data-translate="signUpLink">Sign up</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- Register Form Section (hidden by default) -->
+        <div id="registerSection" class="hidden">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-center text-gray-800 mb-8" data-translate="createAccount">Create Your Account</h2>
+
+            <form id="registerForm" class="space-y-6">
+                <!-- Name Input Field -->
+                <div>
+                    <label for="registerName" class="block text-gray-700 text-sm md:text-base font-semibold mb-2" data-translate="fullName">Full Name</label>
+                    <input
+                        type="text"
+                        id="registerName"
+                        name="name"
+                        data-translate-placeholder="fullNamePlaceholder"
+                        placeholder="John Doe"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 ease-in-out"
+                        required
+                    >
+                </div>
+
+                <!-- Email Input Field -->
+                <div>
+                    <label for="registerEmail" class="block text-gray-700 text-sm md:text-base font-semibold mb-2" data-translate="emailAddress">Email Address</label>
+                    <input
+                        type="email"
+                        id="registerEmail"
+                        name="email"
+                        data-translate-placeholder="emailPlaceholder"
+                        placeholder="you@example.com"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 ease-in-out"
+                        required
+                    >
+                </div>
+
+                <!-- Password Input Field -->
+                <div>
+                    <label for="registerPassword" class="block text-gray-700 text-sm md:text-base font-semibold mb-2" data-translate="password">Password</label>
+                    <input
+                        type="password"
+                        id="registerPassword"
+                        name="password"
+                        placeholder="••••••••"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 ease-in-out"
+                        required
+                    >
+                </div>
+
+                <!-- Confirm Password Input Field -->
+                <div>
+                    <label for="confirmPassword" class="block text-gray-700 text-sm md:text-base font-semibold mb-2" data-translate="confirmPassword">Confirm Password</label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder="••••••••"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 ease-in-out"
+                        required
+                    >
+                </div>
+
+                <!-- Register Button -->
+                <div>
+                    <button
+                        type="submit"
+                        class="w-full bg-gradient-to-r from-teal-500 to-green-600 text-white font-bold py-3 px-4 rounded-lg hover:from-teal-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transform transition duration-300 ease-in-out hover:scale-105 shadow-md hover:shadow-lg"
+                        data-translate="registerButton"
+                    >
+                        Register
+                    </button>
+                </div>
+
+                <!-- Login Link -->
+                <p class="text-center text-gray-600 text-sm md:text-base mt-6">
+                    <span data-translate="alreadyAccount">Already have an account?</span>
+                    <a href="#" id="showLogin" class="font-medium text-indigo-600 hover:text-indigo-800 transition duration-200 ease-in-out" data-translate="loginLink">Login</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message Box Element -->
+    <div id="messageBox"></div>
+
+    <script>
+        // function data(){
+        //     window.open("dashboard.html");
+        // }
+        // Define translation data
+        const translations = {
+            en: {
+                beautifulLoginRegisterForm: "Beautiful Login/Register Form",
+                loginAccount: "Login to Your Account",
+                emailOrUsername: "Email or Username",
+                password: "Password",
+                rememberMe: "Remember me",
+                forgotPassword: "Forgot password?",
+                loginButton: "Login",
+                noAccount: "Don't have an account?",
+                signUpLink: "Sign up",
+                createAccount: "Create Your Account",
+                fullName: "Full Name",
+                emailAddress: "Email Address",
+                confirmPassword: "Confirm Password",
+                registerButton: "Register",
+                alreadyAccount: "Already have an account?",
+                loginLink: "Login",
+                emailPlaceholder: "you@example.com",
+                fullNamePlaceholder: "John Doe",
+                fillAllFieldsLogin: "Please fill in all fields for login.",
+                passwordLength: "Password must be at least 6 characters long.",
+                loginSuccess: "Login successful! Welcome!",
+                fillAllFieldsRegister: "Please fill in all fields for registration.",
+                passwordsMismatch: "Passwords do not match.",
+                registerSuccess: "Registration successful! You can now log in.",
+                languageSetTo: "Language set to "
+            },
+            es: {
+                beautifulLoginRegisterForm: "Hermoso Formulario de Inicio de Sesión/Registro",
+                loginAccount: "Iniciar Sesión en tu Cuenta",
+                emailOrUsername: "Correo electrónico o Usuario",
+                password: "Contraseña",
+                rememberMe: "Recordarme",
+                forgotPassword: "¿Olvidaste tu contraseña?",
+                loginButton: "Iniciar Sesión",
+                noAccount: "¿No tienes una cuenta?",
+                signUpLink: "Registrarse",
+                createAccount: "Crea tu Cuenta",
+                fullName: "Nombre Completo",
+                emailAddress: "Dirección de Correo Electrónico",
+                confirmPassword: "Confirmar Contraseña",
+                registerButton: "Registrarse",
+                alreadyAccount: "¿Ya tienes una cuenta?",
+                loginLink: "Iniciar Sesión",
+                emailPlaceholder: "tu@ejemplo.com",
+                fullNamePlaceholder: "Juan Pérez",
+                fillAllFieldsLogin: "Por favor, completa todos los campos para iniciar sesión.",
+                passwordLength: "La contraseña debe tener al menos 6 caracteres.",
+                loginSuccess: "¡Inicio de sesión exitoso! ¡Bienvenido!",
+                fillAllFieldsRegister: "Por favor, completa todos los campos para el registro.",
+                passwordsMismatch: "Las contraseñas no coinciden.",
+                registerSuccess: "¡Registro exitoso! Ahora puedes iniciar sesión.",
+                languageSetTo: "Idioma establecido en "
+            },
+            km: {
+                beautifulLoginRegisterForm: "ទម្រង់ចូល/ចុះឈ្មោះដ៏ស្រស់ស្អាត",
+                loginAccount: "ចូលគណនីរបស់អ្នក",
+                emailOrUsername: "អ៊ីមែល ឬ ឈ្មោះអ្នកប្រើប្រាស់",
+                password: "ពាក្យសម្ងាត់",
+                rememberMe: "ចងចាំខ្ញុំ",
+                forgotPassword: "ភ្លេចពាក្យសម្ងាត់?",
+                loginButton: "ចូល",
+                noAccount: "មិនមានគណនី?",
+                signUpLink: "ចុះឈ្មោះ",
+                createAccount: "បង្កើតគណនីរបស់អ្នក",
+                fullName: "ឈ្មោះពេញ",
+                emailAddress: "អាសយដ្ឋានអ៊ីមែល",
+                confirmPassword: "បញ្ជាក់ពាក្យសម្ងាត់",
+                registerButton: "ចុះឈ្មោះ",
+                alreadyAccount: "មានគណនីរួចហើយ?",
+                loginLink: "ចូល",
+                emailPlaceholder: "អ្នក@ឧទាហរណ៍.com",
+                fullNamePlaceholder: "ចន ដូ",
+                fillAllFieldsLogin: "សូមបំពេញគ្រប់វាលសម្រាប់ការចូល។",
+                passwordLength: "ពាក្យសម្ងាត់ត្រូវតែមានយ៉ាងហោចណាស់ 6 តួអក្សរ។",
+                loginSuccess: "ចូលជោគជ័យ! សូមស្វាគមន៍!",
+                fillAllFieldsRegister: "សូមបំពេញគ្រប់វាលសម្រាប់ការចុះឈ្មោះ។",
+                passwordsMismatch: "ពាក្យសម្ងាត់មិនត្រូវគ្នា។",
+                registerSuccess: "ចុះឈ្មោះជោគជ័យ! ឥឡូវអ្នកអាចចូលបាន។",
+                languageSetTo: "បានប្ដូរភាសាទៅ "
+            }
+        };
+
+        let currentLanguage = 'en'; // Default language
+
+        /**
+         * Displays a custom message box at the top of the screen.
+         * @param {string} message - The message to display.
+         * @param {boolean} isError - If true, styles the message as an error.
+         */
+        function showMessageBox(message, isError = false) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            // Reset classes to ensure correct styling for consecutive calls
+            messageBox.className = ''; // Remove all previous classes
+            messageBox.classList.add('message-box');
+
+            if (isError) {
+                messageBox.classList.add('error');
+            }
+            messageBox.classList.add('show');
+
+            // Hide the message after 3 seconds
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 3000);
+        }
+
+        /**
+         * Applies translations to all elements with data-translate attributes based on the current language.
+         * @param {string} lang - The language code (e.g., 'en', 'es', 'km').
+         */
+        function applyTranslations(lang) {
+            // Update elements with data-translate attribute (text content)
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            // Update input placeholders
+            document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-translate-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+
+            // Update the display text of the language selector button
+            document.getElementById('currentLanguageDisplay').textContent = lang.toUpperCase();
+
+            // Update the document title
+            document.title = translations[lang].beautifulLoginRegisterForm;
+        }
+
+        // Get references to the login and register sections
+        const loginSection = document.getElementById('loginSection');
+        const registerSection = document.getElementById('registerSection');
+        const showRegisterLink = document.getElementById('showRegister');
+        const showLoginLink = document.getElementById('showLogin');
+
+        // Language dropdown elements
+        const languageDropdownToggle = document.getElementById('languageDropdownToggle');
+        const languageDropdown = document.getElementById('languageDropdown');
+
+        // Function to toggle between login and register forms
+        function showForm(formType) {
+            if (formType === 'login') {
+                loginSection.classList.remove('hidden');
+                registerSection.classList.add('hidden');
+            } else if (formType === 'register') {
+                loginSection.classList.add('hidden');
+                registerSection.classList.remove('hidden');
+            }
+        }
+
+        // Event listener for showing the register form
+        showRegisterLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            showForm('register');
+        });
+
+        // Event listener for showing the login form
+        showLoginLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            showForm('login');
+        });
+
+        // Event listener for the language dropdown toggle
+        languageDropdownToggle.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent document click from closing it immediately
+            languageDropdown.classList.toggle('hidden');
+        });
+
+        /**
+         * Handles language selection from the dropdown.
+         * @param {string} lang - The selected language code (e.g., 'en', 'es', 'km').
+         */
+        function selectLanguage(lang) {
+            currentLanguage = lang; // Update the global current language
+            applyTranslations(currentLanguage); // Apply new translations
+            showMessageBox(translations[currentLanguage].languageSetTo + lang.toUpperCase()); // Display confirmation message
+            languageDropdown.classList.add('hidden'); // Hide dropdown after selection
+        }
+
+        // Close dropdown if clicked outside
+        document.addEventListener('click', function(event) {
+            if (!languageDropdownToggle.contains(event.target) && !languageDropdown.contains(event.target)) {
+                languageDropdown.classList.add('hidden');
+            }
+        });
+
+
+        // Login Form Submission Handler
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Basic validation and simulated login logic
+            if (email === '' || password === '') {
+                showMessageBox(translations[currentLanguage].fillAllFieldsLogin, true);
+            } else if (password.length < 6) {
+                showMessageBox(translations[currentLanguage].passwordLength, true);
+            } else {
+                // Simulate a successful login
+                showMessageBox(translations[currentLanguage].loginSuccess);
+                // In a real application, you would send this data to a server for authentication.
+                console.log('Attempting to log in with:', { email, password });
+
+                // You could clear the form after a successful login if desired
+                // this.reset();
+            }
+        });
+
+        // Register Form Submission Handler
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Basic validation for registration
+            if (name === '' || email === '' || password === '' || confirmPassword === '') {
+                showMessageBox(translations[currentLanguage].fillAllFieldsRegister, true);
+            } else if (password.length < 6) {
+                showMessageBox(translations[currentLanguage].passwordLength, true);
+            } else if (password !== confirmPassword) {
+                showMessageBox(translations[currentLanguage].passwordsMismatch, true);
+            } else {
+                // Simulate a successful registration
+                showMessageBox(translations[currentLanguage].registerSuccess);
+                // In a real application, you would send this data to a server to create a new account.
+                console.log('Attempting to register with:', { name, email, password });
+
+                // Optionally, switch to the login form after successful registration
+                showForm('login');
+                // Clear the registration form
+                this.reset();
+            }
+        });
+
+        // Initialize translations when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTranslations(currentLanguage); // Apply default language on load
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+    <meta name="sign out" content="let sign out your account">
+    <link rel="stylesheet" href="/src/output.css">
+    <link rel="icon" type="image/png" href="/pic/island.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Sign Out</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Animation for the sign-out card */
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .signout-card {
+            animation: fadeInScale 0.5s ease-out forwards;
+        }
+
+        /* Button hover effects */
+        .btn-hover-scale:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-500 to-purple-600">
+    <div class="signout-card bg-white p-10 rounded-xl shadow-2xl text-center max-w-md w-full mx-4">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-6">Signing Out...</h1>
+        <p class="text-lg text-gray-600 mb-8">
+            You are about to sign out of your dashboard.
+            Are you sure you want to continue?
+        </p>
+
+        <div class="space-y-4 sm:space-y-0 sm:flex sm:justify-center sm:space-x-4">
+            <button id="confirmSignOut"
+                    class="w-full sm:w-auto px-8 py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-300 ease-in-out transform btn-hover-scale">
+                Yes, Sign Me Out
+            </button>
+            <button id="cancelSignOut"
+                    class="w-full sm:w-auto px-8 py-3 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-300 ease-in-out transform btn-hover-scale">
+                Cancel
+            </button>
+        </div>
+
+        <!-- Message Box for Alerts -->
+        <div id="messageBox" class="hidden mt-6 p-3 rounded-md text-sm text-white text-center" role="alert"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const confirmSignOutButton = document.getElementById('confirmSignOut');
+            const cancelSignOutButton = document.getElementById('cancelSignOut');
+            const messageBox = document.getElementById('messageBox');
+
+            // Function to display a message in the message box
+            function showMessage(message, type = 'success') {
+                messageBox.textContent = message;
+                messageBox.classList.remove('hidden', 'bg-red-500', 'bg-green-500', 'bg-yellow-500');
+                if (type === 'success') {
+                    messageBox.classList.add('bg-green-500');
+                } else if (type === 'error') {
+                    messageBox.classList.add('bg-red-500');
+                } else { // info or warning
+                    messageBox.classList.add('bg-yellow-500');
+                }
+                // Automatically hide the message after 3 seconds
+                setTimeout(hideMessage, 3000);
+            }
+
+            // Function to hide the message box
+            function hideMessage() {
+                messageBox.classList.add('hidden');
+                messageBox.textContent = '';
+            }
+
+            confirmSignOutButton.addEventListener('click', () => {
+                // In a real application, you would perform the actual sign-out logic here.
+                // This might involve clearing session data, redirecting to a login page, etc.
+                showMessage('You have been successfully signed out. Redirecting...', 'success');
+                console.log('User confirmed sign out. Performing sign out actions...');
+
+                // Simulate redirection after a short delay
+                setTimeout(() => {
+                    // For demonstration, we'll just show an alert. In a real app,
+                    // you'd typically redirect to the login page or home page.
+                    // window.location.href = '/login.html'; // Example redirection
+                    console.log('Redirecting to login page (simulated).');
+                }, 1500);
+            });
+
+            cancelSignOutButton.addEventListener('click', () => {
+                showMessage('Sign out cancelled. Returning to dashboard...', 'info');
+                console.log('User cancelled sign out.');
+                // Simulate redirection back to the dashboard
+                setTimeout(() => {
+                    // window.location.href = '/dashboard.html'; // Example redirection
+                    console.log('Returning to dashboard (simulated).');
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>
